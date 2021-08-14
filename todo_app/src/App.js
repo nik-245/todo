@@ -13,7 +13,7 @@ function App() {
    useEffect(() => {
     //this code here... fires when the app loads 
     db.collection('todos').orderBy('timestamp','asc').onSnapshot(snapshot =>{
-      setTodo(snapshot.docs.map(doc => doc.data().todo)) 
+      setTodo(snapshot.docs.map(doc => ({id : doc.id , todo : doc.data().todo}))) 
     })
    }, [])
   // const TimeStamp = ;
@@ -32,9 +32,10 @@ function App() {
   return (
     <div className="App">
       <h1>ToDO Application☑</h1>
-      <FormControl>
+      <FormControl style={{margin:'-10px 10px 5px 10px',padding:'5px'}}>
         <InputLabel>Write a Todo Notes</InputLabel>
         <Input
+          className="input-f"
           type="text"
           value={input}
           onChange={(event) => setInput(event.target.value)}
@@ -42,6 +43,8 @@ function App() {
       </FormControl>
 
       <Button
+      style={{margin:'5px',padding:'5px'}}
+      className="add_btn"
         disabled={!input}
         variant="contained"
         color="primary"
@@ -55,7 +58,7 @@ function App() {
 
       <ul>
         {todo.map((todos) => (
-          <Todo  text={todos} />
+          <Todo  todo={todos} />
         ))}
         {/* <li>{todo[1]}</li> */}
       </ul>
