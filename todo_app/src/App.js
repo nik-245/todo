@@ -1,20 +1,31 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import "./App.css";
 import { Button, FormControl, InputLabel, Input } from "@material-ui/core";
 import Todo from "./Todo";
+import db from "./firebase";
+import firebase from "firebase";
 
 function App() {
-  const [todo, setTodo] = useState([
-    "hello world this is first todo",
-    "second todo hear",
-    "oneother todo add in todo",
-  ]);
+  const [todo, setTodo] = useState([]);
   const [input, setInput] = useState("");
 
+  // when the app loads , we need to listen to the database and fetch new todos as they get added/remove
+   useEffect(() => {
+    //this code here... fires when the app loads 
+    db.collection('todos').orderBy('timestamp','asc').onSnapshot(snapshot =>{
+      setTodo(snapshot.docs.map(doc => doc.data().todo)) 
+    })
+   }, [])
+  // const TimeStamp = ;
   const addTodo = (event) => {
-    console.log("its woking to find the way");
+    // console.log("its woking to find the way");
     event.preventDefault();
-    setTodo([...todo, input]);
+    db.collection('todos').add({
+     todo : input,
+     timestamp : firebase.firestore.FieldValue.serverTimestamp()
+
+    });
+    // setTodo([...todo, input]);
     setInput("");
   };
 
@@ -44,7 +55,7 @@ function App() {
 
       <ul>
         {todo.map((todos) => (
-          <Todo  text={todos}/>
+          <Todo  text={todos} />
         ))}
         {/* <li>{todo[1]}</li> */}
       </ul>
